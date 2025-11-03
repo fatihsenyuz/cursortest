@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: royal_mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+    networks:
+      - royal_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: royal_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - royal_network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: royal_backend
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    environment:
+      MONGO_URL: mongodb://admin:admin123@mongodb:27017/?authSource=admin
+      DB_NAME: royal_koltuk
+      JWT_SECRET_KEY: your_super_secret_jwt_key_change_this_in_production
+      ILETIMERKEZI_API_KEY: ${ILETIMERKEZI_API_KEY}
+      ILETIMERKEZI_HASH: ${ILETIMERKEZI_HASH}
+      ILETIMERKEZI_SENDER: FatihSenyuz
+      CORS_ORIGINS: http://localhost:3000,http://localhost:3001
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - royal_network
+    command: uvicorn server:app --host 0.0.0.0 --port 8001 --reload
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: royal_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_BACKEND_URL: http://localhost:8001
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - royal_network
+    command: yarn start
+
+volumes:
+  mongodb_data:
+  mongodb_config:
+  redis_data:
+
+networks:
+  royal_network:
+    driver: bridge
+

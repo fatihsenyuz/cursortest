@@ -1,0 +1,54 @@
+🚀 ROYAL KOLTUK YIKAMA SİSTEMİ - KURULUM REHBERİ
+=================================================
+
+📦 DOSYAYI AÇMA:
+---------------
+1. royal_koltuk_yikama_working.tar.gz dosyasını indirin
+2. Terminal/CMD'de şu komutu çalıştırın:
+   
+   tar -xzf royal_koltuk_yikama_working.tar.gz
+   
+   VEYA Windows'ta: 7-Zip, WinRAR ile sağ tık > Extract
+
+✅ ÇIKACAK KLASÖRLER:
+--------------------
+backend/          - FastAPI backend
+  ├── server.py   - Ana uygulama (İletimerkezi SMS entegrasyonlu)
+  ├── requirements.txt
+  └── .env        - API bilgileri (GÜVENLİ SAKLAYINIZ!)
+
+frontend/         - React frontend
+  ├── src/
+  ├── public/
+  ├── package.json
+  └── .env        - Backend URL
+
+🔧 YENİDEN KURULUM:
+------------------
+1. Backend:
+   cd backend
+   pip install -r requirements.txt
+   uvicorn server:app --host 0.0.0.0 --port 8001
+
+2. Frontend:
+   cd frontend
+   yarn install
+   yarn start
+
+3. MongoDB:
+   - Yerel MongoDB kurulu olmalı
+   - Veya .env'deki MONGO_URL'i güncelleyin
+
+📝 ÖNEMLİ NOTLAR:
+----------------
+✅ Tüm dosyalar DOLU ve çalışır durumda
+✅ İletimerkezi SMS entegrasyonu backend'de hazır
+✅ .env dosyalarını güvenli saklayın
+✅ node_modules tekrar yüklenecek (yarn install ile)
+
+🔐 GÜVENLİK:
+-----------
+⚠️ .env dosyalarını GitHub'a yüklemeyin!
+⚠️ API Key ve Hash bilgilerini gizli tutun!
+
+İyi çalışmalar! 🎉
